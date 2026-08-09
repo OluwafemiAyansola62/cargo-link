@@ -1,103 +1,287 @@
-import Image from "next/image";
+import {
+  ArrowUpRight,
+  BookOpenCheck,
+  ClipboardCheck,
+  FileCheck2,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+
+const metrics = [
+  {
+    label: "Active Standards",
+    value: "128",
+    change: "+12 this month",
+    icon: BookOpenCheck,
+  },
+  {
+    label: "Compliance Rate",
+    value: "94.8%",
+    change: "+2.4% this month",
+    icon: ShieldCheck,
+  },
+  {
+    label: "Documents",
+    value: "342",
+    change: "+28 this month",
+    icon: FileCheck2,
+  },
+  {
+    label: "Open Reviews",
+    value: "17",
+    change: "5 due this week",
+    icon: ClipboardCheck,
+  },
+];
+
+const recentStandards = [
+  {
+    code: "CL-OPS-001",
+    title: "Cargo Handling & Documentation",
+    category: "Operations",
+    status: "Active",
+    updated: "2 hours ago",
+  },
+  {
+    code: "CL-CMP-004",
+    title: "International Shipping Compliance",
+    category: "Compliance",
+    status: "Under Review",
+    updated: "Yesterday",
+  },
+  {
+    code: "CL-SAF-002",
+    title: "Cargo Safety & Risk Management",
+    category: "Safety",
+    status: "Active",
+    updated: "3 days ago",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="space-y-8 p-6 lg:p-8">
+      {/* Header */}
+      <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">
+            Operations Overview
+          </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+            Welcome to CargoLink
+          </h1>
+
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Monitor standards, compliance, documentation, and operational
+            readiness from one centralized workspace.
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <button
+          type="button"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-foreground px-4 text-sm font-medium text-background transition hover:opacity-90"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <Truck className="size-4" />
+          New Operation
+        </button>
+      </section>
+
+      {/* Metrics */}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((metric) => {
+          const Icon = metric.icon;
+
+          return (
+            <div
+              key={metric.label}
+              className="rounded-xl border bg-background p-5 shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
+                  <Icon className="size-4" />
+                </div>
+
+                <ArrowUpRight className="size-4 text-muted-foreground" />
+              </div>
+
+              <p className="mt-5 text-sm text-muted-foreground">
+                {metric.label}
+              </p>
+
+              <p className="mt-1 text-2xl font-semibold tracking-tight">
+                {metric.value}
+              </p>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                {metric.change}
+              </p>
+            </div>
+          );
+        })}
+      </section>
+
+      {/* Main content */}
+      <section className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+        {/* Standards */}
+        <div className="rounded-xl border bg-background shadow-sm">
+          <div className="flex items-center justify-between border-b p-5">
+            <div>
+              <h2 className="font-semibold">Recent Standards</h2>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Recently updated standards in your workspace.
+              </p>
+            </div>
+
+            <a
+              href="/standards"
+              className="text-sm font-medium hover:underline"
+            >
+              View all
+            </a>
+          </div>
+
+          <div className="divide-y">
+            {recentStandards.map((standard) => (
+              <div
+                key={standard.code}
+                className="flex items-center justify-between gap-4 p-5"
+              >
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {standard.code}
+                  </p>
+
+                  <h3 className="mt-1 truncate text-sm font-medium">
+                    {standard.title}
+                  </h3>
+
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {standard.category} · Updated {standard.updated}
+                  </p>
+                </div>
+
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
+                    standard.status === "Active"
+                      ? "bg-foreground text-background"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {standard.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Compliance */}
+        <div className="rounded-xl border bg-background p-5 shadow-sm">
+          <div>
+            <h2 className="font-semibold">Compliance Overview</h2>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              Current operational compliance status.
+            </p>
+          </div>
+
+          <div className="mt-8 flex items-center justify-center">
+            <div className="relative flex size-40 items-center justify-center rounded-full border-[12px] border-muted">
+              <div className="absolute inset-0 rounded-full border-[12px] border-foreground border-r-transparent border-b-transparent" />
+
+              <div className="text-center">
+                <p className="text-3xl font-semibold">94.8%</p>
+                <p className="text-xs text-muted-foreground">Compliant</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                Standards reviewed
+              </span>
+
+              <span className="font-medium">112 / 128</span>
+            </div>
+
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                Documents verified
+              </span>
+
+              <span className="font-medium">318 / 342</span>
+            </div>
+
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                Open compliance issues
+              </span>
+
+              <span className="font-medium">9</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick actions */}
+      <section>
+        <div className="mb-4">
+          <h2 className="font-semibold">Quick Actions</h2>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Common tasks for your operations team.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              title: "Browse Standards",
+              description:
+                "Explore the CargoLink standards and requirements library.",
+              icon: BookOpenCheck,
+            },
+            {
+              title: "Run Compliance Check",
+              description:
+                "Review your current compliance position against standards.",
+              icon: ShieldCheck,
+            },
+            {
+              title: "Upload Document",
+              description:
+                "Add operational or compliance documentation to CargoLink.",
+              icon: FileCheck2,
+            },
+          ].map((action) => {
+            const Icon = action.icon;
+
+            return (
+              <button
+                key={action.title}
+                type="button"
+                className="group rounded-xl border bg-background p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
+                  <Icon className="size-4" />
+                </div>
+
+                <h3 className="mt-4 text-sm font-semibold">
+                  {action.title}
+                </h3>
+
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  {action.description}
+                </p>
+
+                <div className="mt-4 text-xs font-medium">Open →</div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
