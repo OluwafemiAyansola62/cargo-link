@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 
-import { AppShell } from "@/components/layout/app-shell";
+
 import {
   StandardsFilters,
 } from "@/features/standards/standards-filters";

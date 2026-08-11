@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ArrowUpRight,
   BookOpenCheck,
@@ -134,12 +135,12 @@ export default function Home() {
               </p>
             </div>
 
-            <a
+            <Link
               href="/standards"
               className="text-sm font-medium hover:underline"
             >
               View all
-            </a>
+            </Link>
           </div>
 
           <div className="divide-y">
