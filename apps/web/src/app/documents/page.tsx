@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   AlertTriangle,
@@ -246,33 +247,13 @@ export default function DocumentsPage() {
             <table className="w-full min-w-[1100px] text-sm">
               <thead className="border-b bg-muted/30">
                 <tr className="text-left">
-                  <th className="px-5 py-3 font-medium">
-                    Document
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Category
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Standard
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Status
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Owner
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Uploaded
-                  </th>
-
-                  <th className="px-5 py-3 font-medium">
-                    Expires
-                  </th>
+                  <th className="px-5 py-3 font-medium">Document</th>
+                  <th className="px-5 py-3 font-medium">Category</th>
+                  <th className="px-5 py-3 font-medium">Standard</th>
+                  <th className="px-5 py-3 font-medium">Status</th>
+                  <th className="px-5 py-3 font-medium">Owner</th>
+                  <th className="px-5 py-3 font-medium">Uploaded</th>
+                  <th className="px-5 py-3 font-medium">Expires</th>
                 </tr>
               </thead>
 
@@ -293,9 +274,12 @@ export default function DocumentsPage() {
                             {document.reference}
                           </p>
 
-                          <p className="mt-1 font-medium">
+                          <Link
+                            href={`/documents/${document.id}`}
+                            className="mt-1 block font-medium hover:underline"
+                          >
                             {document.name}
-                          </p>
+                          </Link>
 
                           <p className="mt-1 max-w-md truncate text-xs text-muted-foreground">
                             {document.description}
@@ -357,7 +341,9 @@ export default function DocumentsPage() {
 
           {filteredDocuments.length === 0 && (
             <div className="p-10 text-center">
-              <p className="font-medium">
+              <FileText className="mx-auto size-8 text-muted-foreground" />
+
+              <p className="mt-3 font-medium">
                 No documents found
               </p>
 
