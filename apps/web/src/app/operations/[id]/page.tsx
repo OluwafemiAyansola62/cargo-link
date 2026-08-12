@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { operations } from "@/features/operations/operations-data";
+import { standards } from "@/features/standards/standards-data";
 
 const readiness = [
   {
@@ -131,13 +133,82 @@ const activity = [
   },
 ];
 
+const workflow = [
+  {
+    step: 1,
+    title: "Operation Created",
+    description:
+      "Cargo movement was registered in the CargoLink workspace.",
+    status: "Completed",
+    date: "Aug 8, 2026",
+  },
+  {
+    step: 2,
+    title: "Documentation",
+    description:
+      "Required shipment and cargo documentation is being verified.",
+    status: "Completed",
+    date: "Aug 10, 2026",
+  },
+  {
+    step: 3,
+    title: "Compliance Review",
+    description:
+      "Applicable standards and compliance requirements are being reviewed.",
+    status: "In Progress",
+    date: "Today",
+  },
+  {
+    step: 4,
+    title: "Safety Verification",
+    description:
+      "Safety controls and supporting evidence must be confirmed.",
+    status: "At Risk",
+    date: "Due Aug 22, 2026",
+  },
+  {
+    step: 5,
+    title: "Cargo Dispatch",
+    description:
+      "Cargo is cleared for dispatch once outstanding requirements are resolved.",
+    status: "Pending",
+    date: "Pending",
+  },
+  {
+    step: 6,
+    title: "Delivery",
+    description:
+      "Cargo movement is completed and delivery confirmation is recorded.",
+    status: "Pending",
+    date: "Pending",
+  },
+];
+
 export default function OperationDetailPage() {
   const params = useParams();
+
+  const [isChecking, setIsChecking] = useState(false);
+  const [checkComplete, setCheckComplete] = useState(false);
+
   const id = String(params.id);
 
   const operation = operations.find(
     (item) => item.id === id,
   );
+
+  const standard = operation
+    ? standards.find((item) => item.code === operation.standard)
+    : undefined;
+
+  const handleComplianceCheck = () => {
+    setIsChecking(true);
+    setCheckComplete(false);
+
+    window.setTimeout(() => {
+      setIsChecking(false);
+      setCheckComplete(true);
+    }, 1200);
+  };
 
   if (!operation) {
     return (
@@ -151,7 +222,9 @@ export default function OperationDetailPage() {
         </Link>
 
         <div className="mt-12 rounded-xl border bg-background p-10 text-center">
-          <p className="font-semibold">Operation not found</p>
+          <p className="font-semibold">
+            Operation not found
+          </p>
 
           <p className="mt-1 text-sm text-muted-foreground">
             The operation you are looking for does not exist.
@@ -224,9 +297,13 @@ export default function OperationDetailPage() {
         <div className="flex gap-2">
           <button
             type="button"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-medium transition hover:bg-muted"
+            onClick={handleComplianceCheck}
+            disabled={isChecking}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Run Compliance Check
+            {isChecking
+              ? "Checking..."
+              : "Run Compliance Check"}
           </button>
 
           <button
@@ -238,7 +315,73 @@ export default function OperationDetailPage() {
         </div>
       </section>
 
-      {/* Operation overview */}
+      {/* Compliance Check Result */}
+      {checkComplete && (
+        <section className="rounded-xl border bg-background p-5 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold">
+                Compliance Check Complete
+              </p>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                The operation was evaluated against its current
+                documentation and compliance requirements.
+              </p>
+            </div>
+
+            <span className="inline-flex w-fit rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+              Attention Required
+            </span>
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <p className="text-xs text-muted-foreground">
+                Verified
+              </p>
+
+              <p className="mt-1 text-xl font-semibold">
+                2
+              </p>
+            </div>
+
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <p className="text-xs text-muted-foreground">
+                Under Review
+              </p>
+
+              <p className="mt-1 text-xl font-semibold">
+                1
+              </p>
+            </div>
+
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <p className="text-xs text-muted-foreground">
+                Missing
+              </p>
+
+              <p className="mt-1 text-xl font-semibold">
+                1
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-lg border bg-muted/30 p-4">
+            <p className="text-sm font-medium">
+              Outstanding issue
+            </p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              Cargo Safety Checklist is missing. Cargo Insurance
+              Certificate is still under review. Resolve these items
+              before the operation can be considered fully ready.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Operation Overview */}
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-xl border bg-background p-5 shadow-sm">
           <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
@@ -294,6 +437,88 @@ export default function OperationDetailPage() {
           <p className="mt-1 font-semibold">
             {operation.expectedCompletion}
           </p>
+        </div>
+      </section>
+
+      {/* Workflow */}
+      <section>
+        <div className="mb-4">
+          <h2 className="font-semibold">
+            Operation Workflow
+          </h2>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Track the operation from documentation through final delivery.
+          </p>
+        </div>
+
+        <div className="rounded-xl border bg-background shadow-sm">
+          <div className="divide-y">
+            {workflow.map((item, index) => {
+              const completed = item.status === "Completed";
+              const inProgress = item.status === "In Progress";
+              const atRisk = item.status === "At Risk";
+
+              return (
+                <div
+                  key={item.step}
+                  className="flex gap-4 p-5"
+                >
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
+                        completed
+                          ? "bg-foreground text-background"
+                          : inProgress
+                            ? "border-2 border-foreground"
+                            : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {item.step}
+                    </div>
+
+                    {index < workflow.length - 1 && (
+                      <div className="mt-2 h-full min-h-8 w-px bg-border" />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1 pb-2">
+                    <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-sm font-medium">
+                            {item.title}
+                          </h3>
+
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                              completed
+                                ? "bg-foreground text-background"
+                                : atRisk
+                                  ? "bg-muted text-foreground"
+                                  : inProgress
+                                    ? "bg-muted text-foreground"
+                                    : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </div>
+
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      <p className="shrink-0 text-xs text-muted-foreground">
+                        {item.date}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -395,17 +620,16 @@ export default function OperationDetailPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-medium text-muted-foreground">
-                  {operation.standard}
+                  {standard?.code ?? operation.standard}
                 </p>
 
                 <h3 className="mt-1 font-semibold">
-                  Cargo Operations Standard
+                  {standard?.title ?? "Standard information unavailable"}
                 </h3>
 
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Operational requirements applicable to the
-                  movement, handling, documentation, and control
-                  of this cargo.
+                  {standard?.description ??
+                    "No additional information is available for this standard."}
                 </p>
               </div>
 
@@ -425,7 +649,7 @@ export default function OperationDetailPage() {
                 </p>
 
                 <p className="mt-1 font-medium">
-                  v2.1
+                  {standard?.version ?? "N/A"}
                 </p>
               </div>
 
@@ -435,7 +659,7 @@ export default function OperationDetailPage() {
                 </p>
 
                 <p className="mt-1 font-medium">
-                  24
+                  {standard?.requirements ?? 0}
                 </p>
               </div>
 
@@ -445,7 +669,7 @@ export default function OperationDetailPage() {
                 </p>
 
                 <p className="mt-1 font-medium">
-                  Active
+                  {standard?.status ?? "Unknown"}
                 </p>
               </div>
             </div>
@@ -499,126 +723,138 @@ export default function OperationDetailPage() {
       </section>
 
       {/* Documents & Evidence */}
-<section>
-  <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-    <div>
-      <h2 className="font-semibold">Documents & Evidence</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Evidence supporting compliance requirements for this operation.
-      </p>
-    </div>
+      <section>
+        <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 className="font-semibold">
+              Documents & Evidence
+            </h2>
 
-    <button
-      type="button"
-      className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-foreground px-3 text-sm font-medium text-background transition hover:opacity-90"
-    >
-      <FileText className="size-4" />
-      Upload Evidence
-    </button>
-  </div>
-
-  {/* Evidence summary */}
-  <div className="mb-4 grid gap-4 sm:grid-cols-3">
-    <div className="rounded-xl border bg-background p-4 shadow-sm">
-      <p className="text-xs text-muted-foreground">
-        Required Evidence
-      </p>
-      <p className="mt-1 text-xl font-semibold">4</p>
-    </div>
-
-    <div className="rounded-xl border bg-background p-4 shadow-sm">
-      <p className="text-xs text-muted-foreground">
-        Verified
-      </p>
-      <p className="mt-1 text-xl font-semibold">2</p>
-    </div>
-
-    <div className="rounded-xl border bg-background p-4 shadow-sm">
-      <p className="text-xs text-muted-foreground">
-        Needs Attention
-      </p>
-      <p className="mt-1 text-xl font-semibold">2</p>
-    </div>
-  </div>
-
-  {/* Evidence warning */}
-  <div className="mb-4 flex items-start gap-3 rounded-xl border bg-muted/40 p-4">
-    <TriangleAlert className="mt-0.5 size-4 shrink-0" />
-
-    <div>
-      <p className="text-sm font-medium">
-        Evidence requires attention
-      </p>
-
-      <p className="mt-1 text-xs leading-5 text-muted-foreground">
-        One required document is missing and one document is still
-        under review. Resolve these items before marking the operation
-        fully ready.
-      </p>
-    </div>
-  </div>
-
-  <div className="overflow-hidden rounded-xl border bg-background shadow-sm">
-    <div className="divide-y">
-      {documents.map((document) => (
-        <div
-          key={document.id}
-          className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between"
-        >
-          <div className="flex min-w-0 items-start gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-              <FileText className="size-4" />
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-medium">
-                  {document.name}
-                </p>
-
-                {document.required && (
-                  <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium">
-                    Required
-                  </span>
-                )}
-              </div>
-
-              <p className="mt-1 text-xs text-muted-foreground">
-                {document.type} · {document.owner}
-              </p>
-
-              <p className="mt-1 text-xs text-muted-foreground">
-                Requirement {document.requirement} · {document.date}
-              </p>
-            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Evidence supporting compliance requirements for this operation.
+            </p>
           </div>
 
-          <div className="flex items-center justify-between gap-4 lg:justify-end">
-            <span
-              className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                document.status === "Verified"
-                  ? "bg-foreground text-background"
-                  : document.status === "Missing"
-                    ? "bg-muted text-foreground"
-                    : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {document.status}
-            </span>
+          <button
+            type="button"
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-foreground px-3 text-sm font-medium text-background transition hover:opacity-90"
+          >
+            <FileText className="size-4" />
+            Upload Evidence
+          </button>
+        </div>
 
-            <button
-              type="button"
-              className="inline-flex size-8 items-center justify-center rounded-md transition hover:bg-muted"
-              aria-label={`Open ${document.name}`}
-            >
-              <ArrowUpRight className="size-4" />
-            </button>
+        {/* Evidence Summary */}
+        <div className="mb-4 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border bg-background p-4 shadow-sm">
+            <p className="text-xs text-muted-foreground">
+              Required Evidence
+            </p>
+
+            <p className="mt-1 text-xl font-semibold">
+              4
+            </p>
+          </div>
+
+          <div className="rounded-xl border bg-background p-4 shadow-sm">
+            <p className="text-xs text-muted-foreground">
+              Verified
+            </p>
+
+            <p className="mt-1 text-xl font-semibold">
+              2
+            </p>
+          </div>
+
+          <div className="rounded-xl border bg-background p-4 shadow-sm">
+            <p className="text-xs text-muted-foreground">
+              Needs Attention
+            </p>
+
+            <p className="mt-1 text-xl font-semibold">
+              2
+            </p>
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+
+        {/* Evidence Warning */}
+        <div className="mb-4 flex items-start gap-3 rounded-xl border bg-muted/40 p-4">
+          <TriangleAlert className="mt-0.5 size-4 shrink-0" />
+
+          <div>
+            <p className="text-sm font-medium">
+              Evidence requires attention
+            </p>
+
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              One required document is missing and one document is still
+              under review. Resolve these items before marking the operation
+              fully ready.
+            </p>
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-xl border bg-background shadow-sm">
+          <div className="divide-y">
+            {documents.map((document) => (
+              <div
+                key={document.id}
+                className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between"
+              >
+                <div className="flex min-w-0 items-start gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <FileText className="size-4" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-medium">
+                        {document.name}
+                      </p>
+
+                      {document.required && (
+                        <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium">
+                          Required
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {document.type} · {document.owner}
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Requirement {document.requirement} · {document.date}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 lg:justify-end">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                      document.status === "Verified"
+                        ? "bg-foreground text-background"
+                        : document.status === "Missing"
+                          ? "bg-muted text-foreground"
+                          : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {document.status}
+                  </span>
+
+                  <button
+                    type="button"
+                    className="inline-flex size-8 items-center justify-center rounded-md transition hover:bg-muted"
+                    aria-label={`Open ${document.name}`}
+                  >
+                    <ArrowUpRight className="size-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Activity */}
       <section>
