@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 
 import { documents } from "@/features/documents/documents-data";
+import { verificationRecords } from "@/features/documents/document-verification-data";
+import { standards } from "@/features/standards/standards-data";
 
 type DocumentDetailPageProps = {
   params: Promise<{
@@ -51,6 +53,27 @@ export default async function DocumentDetailPage({
       </div>
     );
   }
+
+  /*
+   * Resolve the document's standard code to the actual standard record.
+   *
+   * Example:
+   * document.standard = "CL-OPS-001"
+   * standard.id = "std-001"
+   *
+   * This allows us to navigate to /standards/std-001 rather than
+   * incorrectly navigating to /standards/CL-OPS-001.
+   */
+  const standard = standards.find(
+    (item) => item.code === document.standard,
+  );
+
+  /*
+   * Get the verification history belonging specifically to this document.
+   */
+  const documentVerifications = verificationRecords.filter(
+    (item) => item.documentId === document.id,
+  );
 
   const isVerified = document.status === "Verified";
   const isPending = document.status === "Pending Review";
@@ -193,6 +216,7 @@ export default async function DocumentDetailPage({
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         {/* Main record */}
         <div className="space-y-6">
+          {/* Document Information */}
           <section className="rounded-xl border bg-background shadow-sm">
             <div className="border-b p-5">
               <h2 className="font-semibold">
@@ -230,12 +254,19 @@ export default async function DocumentDetailPage({
                   Applicable Standard
                 </p>
 
-                <Link
-                  href={`/standards/${document.standard}`}
-                  className="mt-1 inline-block text-sm font-medium hover:underline"
-                >
-                  {document.standard}
-                </Link>
+                {standard ? (
+                  <Link
+                    href={`/standards/${standard.id}`}
+                    className="mt-1 inline-flex items-center gap-1 text-sm font-medium hover:underline"
+                  >
+                    {standard.code}
+                    <span className="text-muted-foreground">↗</span>
+                  </Link>
+                ) : (
+                  <p className="mt-1 text-sm font-medium text-muted-foreground">
+                    {document.standard}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -294,7 +325,7 @@ export default async function DocumentDetailPage({
             </div>
           </section>
 
-          {/* Verification history */}
+          {/* Verification History */}
           <section className="rounded-xl border bg-background shadow-sm">
             <div className="border-b p-5">
               <h2 className="font-semibold">
@@ -308,9 +339,10 @@ export default async function DocumentDetailPage({
             </div>
 
             <div className="divide-y">
+              {/* Upload event */}
               <div className="flex gap-4 p-5">
                 <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <CheckCircle2 className="size-4" />
+                  <FileText className="size-4" />
                 </div>
 
                 <div className="min-w-0">
@@ -329,39 +361,59 @@ export default async function DocumentDetailPage({
                 </div>
               </div>
 
-              <div className="flex gap-4 p-5">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                  {isVerified ? (
-                    <CheckCircle2 className="size-4" />
-                  ) : (
-                    <Clock3 className="size-4" />
-                  )}
+              {/* Verification records */}
+              {documentVerifications.length > 0 ? (
+                documentVerifications.map((record) => (
+                  <div
+                    key={record.id}
+                    className="flex gap-4 p-5"
+                  >
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                      {record.action === "Verified" ? (
+                        <CheckCircle2 className="size-4" />
+                      ) : (
+                        <Clock3 className="size-4" />
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                        <p className="font-medium">
+                          {record.action}
+                        </p>
+
+                        <span className="w-fit rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+                          {record.action}
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {record.note}
+                      </p>
+
+                      <div className="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                        <span>{record.reviewer}</span>
+                        <span>·</span>
+                        <span>{record.date}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-5">
+                  <p className="text-sm text-muted-foreground">
+                    No additional verification activity has been recorded
+                    for this document.
+                  </p>
                 </div>
-
-                <div className="min-w-0">
-                  <p className="font-medium">
-                    {isVerified
-                      ? "Verification completed"
-                      : isRejected
-                        ? "Verification requires corrective action"
-                        : "Verification pending"}
-                  </p>
-
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Current document status: {document.status}.
-                  </p>
-
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    CargoLink Compliance
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </section>
         </div>
 
         {/* Sidebar */}
         <aside className="space-y-6">
+          {/* Compliance Relationship */}
           <section className="rounded-xl border bg-background p-5 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
@@ -384,24 +436,66 @@ export default async function DocumentDetailPage({
                 Applicable Standard
               </p>
 
-              <p className="mt-1 font-semibold">
-                {document.standard}
-              </p>
+              {standard ? (
+                <>
+                  <p className="mt-1 font-semibold">
+                    {standard.code}
+                  </p>
 
-              <p className="mt-2 text-sm text-muted-foreground">
-                This document is maintained as supporting evidence for the
-                associated CargoLink standard.
-              </p>
+                  <p className="mt-1 text-sm font-medium">
+                    {standard.title}
+                  </p>
 
-              <Link
-                href={`/standards/${document.standard}`}
-                className="mt-4 inline-flex text-sm font-medium hover:underline"
-              >
-                View standard
-              </Link>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {standard.description}
+                  </p>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground">
+                        Version
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium">
+                        v{standard.version}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-muted-foreground">
+                        Status
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium">
+                        {standard.status}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/standards/${standard.id}`}
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-medium hover:underline"
+                  >
+                    View standard
+                    <span>↗</span>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="mt-1 font-semibold">
+                    {document.standard}
+                  </p>
+
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Standard information is currently unavailable for this
+                    document.
+                  </p>
+                </>
+              )}
             </div>
           </section>
 
+          {/* Record Actions */}
           <section className="rounded-xl border bg-background p-5 shadow-sm">
             <h2 className="font-semibold">
               Record Actions
@@ -444,6 +538,7 @@ export default async function DocumentDetailPage({
             </div>
           </section>
 
+          {/* Record ID */}
           <section className="rounded-xl border bg-background p-5 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Record ID

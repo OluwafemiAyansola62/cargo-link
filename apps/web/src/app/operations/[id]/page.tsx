@@ -619,13 +619,30 @@ export default function OperationDetailPage() {
           <div className="p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-medium text-muted-foreground">
-                  {standard?.code ?? operation.standard}
-                </p>
+                {standard ? (
+                  <Link
+                    href={`/standards/${standard.id}`}
+                    className="group block"
+                  >
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {standard.code}
+                    </p>
 
-                <h3 className="mt-1 font-semibold">
-                  {standard?.title ?? "Standard information unavailable"}
-                </h3>
+                    <h3 className="mt-1 font-semibold group-hover:underline">
+                      {standard.title}
+                    </h3>
+                  </Link>
+                ) : (
+                  <>
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {operation.standard}
+                    </p>
+
+                    <h3 className="mt-1 font-semibold">
+                      Standard information unavailable
+                    </h3>
+                  </>
+                )}
 
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
                   {standard?.description ??
@@ -633,13 +650,15 @@ export default function OperationDetailPage() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                className="inline-flex size-8 shrink-0 items-center justify-center rounded-md transition hover:bg-muted"
-                aria-label="Open standard"
-              >
-                <ArrowUpRight className="size-4" />
-              </button>
+              {standard && (
+                <Link
+                  href={`/standards/${standard.id}`}
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md transition hover:bg-muted"
+                  aria-label={`Open ${standard.title}`}
+                >
+                  <ArrowUpRight className="size-4" />
+                </Link>
+              )}
             </div>
 
             <div className="mt-6 grid grid-cols-3 gap-4 border-t pt-5">
