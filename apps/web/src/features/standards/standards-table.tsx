@@ -1,25 +1,58 @@
 import Link from "next/link";
-import { ArrowUpRight, FileText } from "lucide-react";
+import {
+  ArrowUpRight,
+  FileText,
+  ShieldAlert,
+  Truck,
+} from "lucide-react";
 
-import type { Standard } from "./standards-data";
+import type { StandardWithMetrics } from "./standards-data";
 
 type StandardsTableProps = {
-  standards: Standard[];
+  standards: StandardWithMetrics[];
 };
 
-export function StandardsTable({ standards }: StandardsTableProps) {
+export function StandardsTable({
+  standards,
+}: StandardsTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border bg-background shadow-sm">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[900px] text-sm">
+        <table className="w-full min-w-[1100px] text-sm">
           <thead className="border-b bg-muted/30">
             <tr className="text-left">
-              <th className="px-5 py-3 font-medium">Standard</th>
-              <th className="px-5 py-3 font-medium">Category</th>
-              <th className="px-5 py-3 font-medium">Version</th>
-              <th className="px-5 py-3 font-medium">Status</th>
-              <th className="px-5 py-3 font-medium">Owner</th>
-              <th className="px-5 py-3 font-medium">Updated</th>
+              <th className="px-5 py-3 font-medium">
+                Standard
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Category
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Version
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Status
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Coverage
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Compliance
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Owner
+              </th>
+
+              <th className="px-5 py-3 font-medium">
+                Updated
+              </th>
+
               <th className="px-5 py-3" />
             </tr>
           </thead>
@@ -30,6 +63,7 @@ export function StandardsTable({ standards }: StandardsTableProps) {
                 key={standard.id}
                 className="transition-colors hover:bg-muted/30"
               >
+                {/* Standard */}
                 <td className="px-5 py-4">
                   <Link
                     href={`/standards/${standard.id}`}
@@ -55,16 +89,19 @@ export function StandardsTable({ standards }: StandardsTableProps) {
                   </Link>
                 </td>
 
+                {/* Category */}
                 <td className="px-5 py-4">
                   <span className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium">
                     {standard.category}
                   </span>
                 </td>
 
+                {/* Version */}
                 <td className="px-5 py-4 text-muted-foreground">
                   v{standard.version}
                 </td>
 
+                {/* Status */}
                 <td className="px-5 py-4">
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -79,14 +116,69 @@ export function StandardsTable({ standards }: StandardsTableProps) {
                   </span>
                 </td>
 
+                {/* Coverage */}
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+                      <Truck className="size-4" />
+                    </div>
+
+                    <div>
+                      <p className="font-medium">
+                        {standard.linkedOperations}
+                      </p>
+
+                      <p className="text-xs text-muted-foreground">
+                        {standard.linkedOperations === 1
+                          ? "operation"
+                          : "operations"}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+
+                {/* Compliance */}
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <p className="font-medium">
+                        {standard.complianceRate !== null
+                          ? `${standard.complianceRate}%`
+                          : "N/A"}
+                      </p>
+
+                      <p className="text-xs text-muted-foreground">
+                        {standard.linkedComplianceItems}{" "}
+                        {standard.linkedComplianceItems === 1
+                          ? "record"
+                          : "records"}
+                      </p>
+                    </div>
+
+                    {standard.issues > 0 && (
+                      <span
+                        className="inline-flex size-7 items-center justify-center rounded-full bg-muted"
+                        title={`${standard.issues} compliance issue${
+                          standard.issues === 1 ? "" : "s"
+                        }`}
+                      >
+                        <ShieldAlert className="size-3.5" />
+                      </span>
+                    )}
+                  </div>
+                </td>
+
+                {/* Owner */}
                 <td className="px-5 py-4 text-muted-foreground">
                   {standard.owner}
                 </td>
 
+                {/* Updated */}
                 <td className="whitespace-nowrap px-5 py-4 text-muted-foreground">
                   {standard.lastUpdated}
                 </td>
 
+                {/* Action */}
                 <td className="px-5 py-4 text-right">
                   <Link
                     href={`/standards/${standard.id}`}
@@ -104,7 +196,9 @@ export function StandardsTable({ standards }: StandardsTableProps) {
 
       {standards.length === 0 && (
         <div className="p-10 text-center">
-          <p className="font-medium">No standards found</p>
+          <p className="font-medium">
+            No standards found
+          </p>
 
           <p className="mt-1 text-sm text-muted-foreground">
             Try adjusting your search or filters.
